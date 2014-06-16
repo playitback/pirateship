@@ -154,6 +154,41 @@ function parseResultsPage(body, success, fail) {
 					parsed.magnet.dn = unescape(decodeURI(parsed.magnet.dn).replace(/[\+\.]/g, ' '));
 			} else
 				return undefined;
+				
+			var descMatch = e.match(/<font class="detDesc">(.*)<\/font>/);
+			
+			if(descMatch !== null) {
+				var uploadedThisYearMatch 		= descMatch[1].match(/Uploaded ([0-9]{2})-([0-9]{2}).*[0-9]{2}:[0-9]{2}/);
+				var uploadedPreviousYearMatch 	= descMatch[1].match(/Uploaded ([0-9]{2})-([0-9]{2}).*([0-9]{4})/);
+				var sizeMatch					= descMatch[1].match(/Size ([0-9]).*(MiB|GiB)/);
+								
+				if(uploadedThisYearMatch !== null) {
+					parsed.uploaded = new Date();
+										
+					parsed.uploaded.setDate(uploadedThisYearMatch[2]);
+					parsed.uploaded.setMonth(uploadedThisYearMatch[1]);
+				}
+				
+				else if(uploadedPreviousYearMatch !== null) {
+					parsed.uploaded = new Date();
+										
+					parsed.uploaded.setDate(uploadedPreviousYearMatch[2]);
+					parsed.uploaded.setMonth(uploadedPreviousYearMatch[1]);
+					parsed.uploaded.setYear(uploadedPreviousYearMatch[3]);
+				}
+				
+				if(sizeMatch !== null) {
+					parsed.size 		= sizeMatch[1];
+					parsed.sizeUnit 	= sizeMatch[2];
+				}
+			}
+						
+			var seedsAndLeachesMatch = e.match(/<td align="right">([0-9].)<\/td>.*\s<td align="right">([0-9].)<\/td>/m);
+						
+			if(seedsAndLeachesMatch !== null) {
+				parsed.seeds 	= seedsAndLeachesMatch[1];
+				parsed.leaches 	= seedsAndLeachesMatch[2];
+			}
 
 			match = e.match(/href="(\/torrent\/.+?)"/);
 
