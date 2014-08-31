@@ -1,0 +1,40 @@
+{
+  "name": "pirateship",
+  "version": "0.0.7",
+  "description": "Sail in the dark waters of the PirateBay.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wilhelmmatilainen/pirateship.git"
+  },
+  "keywords": [
+    "pirateship",
+    "piratebay",
+    "torrent",
+    "magnet",
+    "query"
+  ],
+  "author": {
+    "name": "Wilhelm Matilainen"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/wilhelmmatilainen/pirateship/issues"
+  },
+  "homepage": "https://github.com/wilhelmmatilainen/pirateship",
+  "dependencies": {
+    "request": "^2.34.0",
+    "url": "^0.7.9",
+    "async": "^0.2.10",
+    "magnet-uri": "^1.1.0"
+  },
+  "readme": "pirateship\n==========\n\nSail in the dark waters of the PirateBay.\nPirateship will automatically select the best proxy or use direct connection if possible.\n\nInstall\n==========\n```javascript\nnpm install pirateship\n```\n\nHow to use\n==========\n```javascript\nvar pirateship = require('pirateship');\n\npirateship.top(pirateship.categories.video.hdmovies, function(results) {\n    console.log(results);\n}, function(error) {\n    console.error(error);\n});\n\npirateship.search(pirateship.categories.application.unix, 'ubuntu', function(results) {\n    console.log(results);\n}, function(error) {\n    console.error(error);\n});\n```",
+  "readmeFilename": "README.md",
+  "_id": "pirateship@0.0.7",
+  "_shasum": "3c975ad71d6b2a3ba887239b8f6c4a1558149a67",
+  "_from": "https://github.com/playitback/pirateship/tarball/master",
+  "_resolved": "https://github.com/playitback/pirateship/tarball/master"
+}
