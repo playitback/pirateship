@@ -85,13 +85,13 @@ function getProxies(success, fail) {
 		if (error)
 			return fail(error);
 
-		var proxies = [];
+		var proxies = [url.parse('http://pirateproxy.bz')];
 
-		proxies = proxies.concat(body.split('\n\n')[1].split('\n').map(function(e) {
+		/*proxies = proxies.concat(body.split('\n\n')[1].split('\n').map(function(e) {
 			return url.parse(e);
-		}));
+		}));*/
 
-		proxies.pop();
+		//proxies.pop();
 
 		var parallel = [];
 
@@ -151,9 +151,7 @@ function getBestProxy(success, fail) {
 
 	getProxies(function(proxies) {
 		bestProxy = proxies[0];
-		
-		console.log('Using PB proxy: ' + bestProxy.href);
-		
+				
 		success(bestProxy);
 	}, fail);
 }
@@ -203,11 +201,11 @@ function parseResultsPage(body, success, fail) {
 				}
 			}
 						
-			var seedsAndLeachesMatch = e.match(/<td align="right">([0-9].)<\/td>.*\s<td align="right">([0-9].)<\/td>/m);
-						
+			var seedsAndLeachesMatch = e.match(/<td align="right">(\d{1,})<\/td>/g);
+									
 			if(seedsAndLeachesMatch !== null) {
-				parsed.seeds 	= seedsAndLeachesMatch[1];
-				parsed.leaches 	= seedsAndLeachesMatch[2];
+				parsed.seeds 	= seedsAndLeachesMatch[0].replace('<td align="right">', '').replace('</td>', '');
+				parsed.leaches 	= seedsAndLeachesMatch[1].replace('<td align="right">', '').replace('</td>', '');
 			}
 
 			match = e.match(/href="(\/torrent\/.+?)"/);
@@ -260,18 +258,28 @@ function search(category, query, success, fail, tries) {
 
 	if (tries > 5)
 		return fail(new Error('Can not connect to the piratebay.'));
-
+		
 	getBestProxy(function(proxy) {
+		if(typeof proxy == 'undefined') {
+			return;
+		}
+		
+		console.log('search', proxy.protocol + '//' + proxy.host + '/search/' + query + '/0/7/' + category);
+	
 		request({
 			url: proxy.protocol + '//' + proxy.host + '/search/' + query + '/0/7/' + category
 		}, function(error, response, body) {
 			if (error) {
+				console.log(error);
 				markProxyInvalidTemporarily(proxy);
 			
 				return fail(error);
 			}
+			
+			console.log('loaded results');
 
 			parseResultsPage(body, success, function() {
+				console.log('failed to parse');
 				if(tries === 5) {
 					markProxyInvalidTemporarily(proxy);
 				}
